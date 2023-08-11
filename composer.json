@@ -64,5 +64,10 @@
             "require": "6.3.*",
             "docker": true
         }
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "*",
+        "phpunit/phpunit": "^9.5",
+        "symfony/phpunit-bridge": "^6.1"
     }
 }
