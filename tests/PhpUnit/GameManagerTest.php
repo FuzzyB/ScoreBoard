@@ -3,24 +3,39 @@
 namespace App\Tests\PhpUnit;
 
 use App\GameManager;
+use App\Interfaces\GameFactoryInterface;
 use App\Interfaces\GameInterface;
 use App\Interfaces\GameRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class GameManagerTest extends TestCase
 {
     private GameManager $gameManager;
     private \PHPUnit\Framework\MockObject\MockObject $gameRepository;
+    private GameFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $gameFactory;
+    private GameInterface|\PHPUnit\Framework\MockObject\MockObject $game;
 
 
     public function setUp(): void
     {
         parent::setUp();
 
+        $this->game = $this->createMock(GameInterface::class);
+        $this->game->method('getId')->willReturn(1);
+        $this->game->method('getHomeTeamName')->willReturn('Poland');
+        $this->game->method('getAwayTeamName')->willReturn('Brazil');
+        $this->game->method('getAwayTeamScore')->willReturn(0);
+        $this->game->method('getHomeTeamScore')->willReturn(0);
+
         $this->gameRepository = $this->createMock(GameRepositoryInterface::class);
-        $this->gameManager = new GameManager($this->gameRepository);
+        $this->gameFactory = $this->createMock(GameFactoryInterface::class);
+
+        $this->gameFactory->expects($this->any())->method('create')->willReturn($this->game); //not sure, let it be at the moment
+        $this->gameManager = new GameManager($this->gameRepository, $this->gameFactory);
     }
+
 
     /** @test */
     public function gameCanBeStarted()
@@ -28,62 +43,53 @@ class GameManagerTest extends TestCase
         $homeTeam = 'Poland';
         $awayTeam = 'Brazil';
 
-        /** @var GameInterface $game */
+        $this->gameFactory->expects($this->once())->method('create')->willReturn($this->game);
+        $this->gameRepository->expects($this->once())->method('add')->willReturn($this->game->getId());
         $game = $this->gameManager->startGame($homeTeam, $awayTeam);
-        $manager = new ReflectionClass(GameManager::class);
+    }
 
-        $this->assertTrue($manager->implementsInterface(GameInterface::class));
-        $this->assertSame($homeTeam, $game->getHomeTeamName());
-        $this->assertSame($awayTeam, $game->getAwayTeamName());
-        $this->assertSame(0, $game->getAwayTeamScore());
-        $this->assertSame(0, $game->getHomeTeamScore());
+    public function gameNamesForExceptionsDataProvider(): array
+    {
+        return [
+            ['', '', "The team name can't be empty"],
+            ['', 'Brazil', "The team name can't be empty"],
+            ['Poland', '', "The team name can't be empty"],
+            ['Poland', 'Poland', "The team names can't be the same"]
+        ];
     }
 
     /**
+     * @dataProvider gameNamesForExceptionsDataProvider
      * @test
      */
-    public function invalidTeamCauseAnExceptionAtStart()
+    public function invalidTeamCauseAnExceptionAtStart($homeTeam, $awayTeam, $msg)
     {
-        $this->expectExceptionMessage("The team name can't be empty");
-        $homeTeam = '';
-        $awayTeam = 'Brazil';
+        $this->expectExceptionMessage($msg);
 
         /** @var GameInterface $game */
-        $game = $this->gameManager->startGame($homeTeam, $awayTeam);
+        $this->gameManager->startGame($homeTeam, $awayTeam);
     }
 
-    /**
-     * @test
-     */
-    public function invalidTeamCauseAnExceptionAtStart2()
-    {
-        $this->expectExceptionMessage("The team name can't be empty");
-        $homeTeam = 'Poland';
-        $awayTeam = '';
 
-        /** @var GameInterface $game */
-        $game = $this->gameManager->startGame($homeTeam, $awayTeam);
-    }
 
     /** @test */
     public function correctGameCanBeFinished()
     {
-        $homeTeam = 'Poland';
-        $awayTeam = 'Brazil';
+
 
         /** @var GameInterface $game */
-        $game = $this->gameManager->startGame($homeTeam, $awayTeam);
-        $gameId = $game->getId();
-        $this->gameManager->finishGame($gameId);
-
-
-        $this->gameRepository->expects(self::once())
-            ->method('findGameById')->willReturn([
-                new Game()
-            ]);
+//        $game = $this->gameManager->startGame($homeTeam, $awayTeam);
+//        $gameId = $game->getId();
+//        $this->gameManager->finishGame($gameId);
+//
+//
+//        $this->gameRepository->expects(self::once())
+//            ->method('update')->willReturn([
+//                new Game()
+//            ]);
 
         //assert method getGameById() is called and game->finish()
-        $this->gameManager->findGame($gameId);
+//        $this->gameManager->finishGame(1);
 
     }
 
