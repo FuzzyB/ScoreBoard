@@ -31,4 +31,18 @@ class GameManager
         $game = $this->gameFactory->create($homeTeam, $awayTeam, 0, 0);
         return $this->repository->add($game);
     }
+
+    /**
+     * @param int $gameId
+     * @return void
+     * @throws \Exception
+     */
+    public function finishGame(int $gameId): bool
+    {
+        if (empty($gameId)) {
+            throw new \Exception("Invalid game ID is provided");
+        }
+
+        return $this->repository->finishGame($gameId);
+    }
 }

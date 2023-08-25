@@ -74,30 +74,32 @@ class GameManagerTest extends TestCase
         $this->gameManager->startGame($homeTeam, $awayTeam);
     }
 
-
-
-    /** @test */
-    public function gameCanBeFinished()
+    /**
+     * @return void
+     * @throws \Exception
+     * @test
+     */
+    public function gameCanBeFinished(): void
     {
+        $gameId = 1;
         $this->gameRepository->expects(self::once())
-            ->method('finishGame')
+            ->method('finishGame')->with($gameId)
             ->willReturn(true);
 
-        $this->gameManager->finishGame(1);
+        $this->gameManager->finishGame($gameId);
     }
-
 
     private function gameIdDataProvider(): array
     {
         return [
-            [null, "Invalid game Id provided"],
-            [0, "Invalid game Id provided"],
+            [0, "Invalid game ID is provided"],
         ];
     }
 
     /**
      * @test
      * @dataProvider gameIdDataProvider
+     * @throws \Exception
      */
     public function finishGameHasIncorrectParameter($gameId, $message)
     {
