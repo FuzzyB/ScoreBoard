@@ -18,7 +18,7 @@ class GameManager
      * @return int
      * @throws \Exception
      */
-    public function startGame(string $homeTeam, string $awayTeam): int
+    public function startGame(string $homeTeam, string $awayTeam): GameInterface
     {
         if (empty($homeTeam) || empty($awayTeam)) {
             throw new \Exception("The team name can't be empty");

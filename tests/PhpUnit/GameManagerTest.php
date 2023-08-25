@@ -47,8 +47,11 @@ class GameManagerTest extends TestCase
         $homeTeam = 'Poland';
         $awayTeam = 'Brazil';
 
-        $this->gameFactory->expects($this->once())->method('create')->willReturn($this->game);
-        $this->gameRepository->expects($this->once())->method('add')->willReturn($this->game->getId());
+        $this->gameFactory->expects($this->once())
+            ->method('create')
+            ->with($homeTeam, $awayTeam, 0, 0)
+            ->willReturn($this->game);
+        $this->gameRepository->expects($this->once())->method('add')->willReturn($this->game);
         $game = $this->gameManager->startGame($homeTeam, $awayTeam);
     }
 
