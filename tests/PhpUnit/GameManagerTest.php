@@ -37,7 +37,11 @@ class GameManagerTest extends TestCase
     }
 
 
-    /** @test */
+    /**
+     * @return void
+     * @throws \Exception
+     * @test
+     */
     public function gameCanBeStarted()
     {
         $homeTeam = 'Poland';
@@ -73,29 +77,35 @@ class GameManagerTest extends TestCase
 
 
     /** @test */
-    public function correctGameCanBeFinished()
+    public function gameCanBeFinished()
     {
+        $this->gameRepository->expects(self::once())
+            ->method('finishGame')
+            ->willReturn(true);
 
-
-        /** @var GameInterface $game */
-//        $game = $this->gameManager->startGame($homeTeam, $awayTeam);
-//        $gameId = $game->getId();
-//        $this->gameManager->finishGame($gameId);
-//
-//
-//        $this->gameRepository->expects(self::once())
-//            ->method('update')->willReturn([
-//                new Game()
-//            ]);
-
-        //assert method getGameById() is called and game->finish()
-//        $this->gameManager->finishGame(1);
-
+        $this->gameManager->finishGame(1);
     }
 
-    //not exists
 
-    //already finished
+    private function gameIdDataProvider(): array
+    {
+        return [
+            [null, "Invalid game Id provided"],
+            [0, "Invalid game Id provided"],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider gameIdDataProvider
+     */
+    public function finishGameHasIncorrectParameter($gameId, $message)
+    {
+        $this->expectExceptionMessage($message);
+
+        $this->gameManager->finishGame($gameId);
+
+    }
 
     /** @test */
     public function gameCanBeUpdated()
