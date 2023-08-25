@@ -7,8 +7,6 @@ use App\Interfaces\GameFactoryInterface;
 use App\Interfaces\GameInterface;
 use App\Interfaces\GameRepositoryInterface;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class GameManagerTest extends TestCase
 {
@@ -28,6 +26,8 @@ class GameManagerTest extends TestCase
         $this->game->method('getAwayTeamName')->willReturn('Brazil');
         $this->game->method('getAwayTeamScore')->willReturn(0);
         $this->game->method('getHomeTeamScore')->willReturn(0);
+        $this->game->method('isFinished')->willReturn(false);
+
 
         $this->gameRepository = $this->createMock(GameRepositoryInterface::class);
         $this->gameFactory = $this->createMock(GameFactoryInterface::class);
@@ -109,16 +109,118 @@ class GameManagerTest extends TestCase
 
     }
 
-    /** @test */
-    public function gameCanBeUpdated()
+    private function updateGameIdDataProvider(): array
     {
+        return [
+            [0, 1, 1, "Invalid game ID is provided"],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider updateGameIdDataProvider
+     * @throws \Exception
+     */
+    public function gameCanBeUpdated($gameId, $pointA, $pointB, $message)
+    {
+        $this->expectExceptionMessage($message);
+
+        $this->gameManager->updatePoints($gameId, $pointA, $pointB);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function gameUpdateSuccess()
+    {
+        $gameId = 1;
+        $pointB = 2;
+        $pointA = 2;
+        $this->gameRepository->expects($this->once())
+            ->method('findById')
+            ->with($gameId)
+            ->willReturn($this->game);
+
+        $this->game->expects($this->once())
+            ->method('isFinished')
+            ->willReturn(false);
+
+        $this->gameRepository->expects($this->once())
+            ->method('update')
+            ->with($gameId, $pointA, $pointB)
+            ->willReturn(true);
+
+        $this->gameManager->updatePoints(1, 2, 2);
+    }
+
+    private function pointsExceptionDataProvider(): array
+    {
+        return [
+            [-1, 0, "Points have to be positive"],
+            [-1, -2, "Points have to be positive"],
+            [2, -2, "Points have to be positive"],
+        ];
+    }
+    /**
+     * @param $pointA
+     * @param $pointB
+     * @return void
+     * @throws \Exception
+     * @dataProvider pointsExceptionDataProvider
+     * @test
+     */
+    public function gameUpdatePointsHaveToBePositive($pointA, $pointB)
+    {
+        $this->expectExceptionMessage("Points have to be positive");
+        $this->gameManager->updatePoints(1, $pointA, $pointB);
+
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function getUpdateFailedByGameStatus()
+    {
+        $gameId = 1;
+        $pointB = 2;
+        $pointA = 2;
+        $this->expectExceptionMessage("It is impossible to change the game's outcome once it is over.");
+        $game = $this->getFinishedGame();
+        $this->gameRepository->expects($this->once())
+            ->method('findById')
+            ->with($gameId)
+            ->willReturn($game);
+
+        $game->expects($this->once())
+            ->method('isFinished')
+            ->willReturn(true);
+
+        $this->gameManager->updatePoints($gameId, $pointA, $pointB);
 
     }
 
 
-
-    public function gameListIsInOrder()
+    /**
+     * @return void
+     * @test
+     */
+    public function gameList()
     {
+        $this->gameRepository->expects($this->once())->method('getInProgressGames');
+
+        $games = $this->gameManager->getList();
+    }
+
+    /**
+     * @return \PHPUnit\Framework\MockObject\Builder\InvocationMocker
+     */
+    private function getFinishedGame()
+    {
+        $game = $this->createMock(GameInterface::class);
+        $game->method('isFinished')->willReturn(true);
+        return $game;
 
     }
 }

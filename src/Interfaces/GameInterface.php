@@ -13,4 +13,6 @@ interface GameInterface
     public function getHomeTeamScore(): int;
 
     public function getId(): int;
+
+    public function isFinished(): bool;
 }

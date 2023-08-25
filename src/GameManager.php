@@ -45,4 +45,34 @@ class GameManager
 
         return $this->repository->finishGame($gameId);
     }
+
+    /**
+     * @param int $gameId
+     * @param int $pointA
+     * @param int $pointB
+     * @return void
+     * @throws \Exception
+     */
+    public function updatePoints(int $gameId, int $pointA, int $pointB)
+    {
+        if ($gameId <= 0) {
+            throw new \Exception("Invalid game ID is provided");
+        }
+
+        if ($pointB < 0 || $pointA < 0) {
+            throw new \Exception( "Points have to be positive");
+        }
+
+        $game = $this->repository->findById($gameId);
+        if ($game->isFinished()) {
+            throw new \Exception("It is impossible to change the game's outcome once it is over.");
+        }
+
+        $this->repository->update($gameId, $pointA, $pointB);
+    }
+
+    public function getList()
+    {
+        return $this->repository->getInProgressGames();
+    }
 }

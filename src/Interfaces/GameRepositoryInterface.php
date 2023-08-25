@@ -7,4 +7,10 @@ interface GameRepositoryInterface
     public function add(): int;
 
     public function finishGame(int $gameId): bool;
+
+    public function findById(int $gameId): GameInterface;
+
+    public function update(int $gameId, int $pointA, int $pointB): bool;
+
+    public function getInProgressGames(): array;
 }
