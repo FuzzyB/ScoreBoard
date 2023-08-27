@@ -8,7 +8,9 @@ use App\Interfaces\GameRepositoryInterface;
 
 class GameManager
 {
-    public function __construct(private GameRepositoryInterface $repository, private GameFactoryInterface $gameFactory)
+    public function __construct(
+        private GameRepositoryInterface $repository,
+        private GameFactoryInterface $gameFactory)
     {
     }
 
