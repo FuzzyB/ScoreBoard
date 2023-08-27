@@ -77,4 +77,19 @@ class GameManager
     {
         return $this->repository->getAllGamesInOrder();
     }
+
+    public function getSummaryByTotalPoints(): string
+    {
+        $summary = '';
+        /**
+         * @var int $k
+         * @var Game $game */
+        foreach ($this->getList() as $k => $game) {
+            $letter = chr(ord('a') + $k);
+            $summary .= $letter . '. ' . $game->getHomeTeamName() . ' - ' . $game->getAwayTeamName() . ': ' . $game->getHomeTeamScore() . ' - ' . $game->getAwayTeamScore() . PHP_EOL;
+        }
+
+        return $summary;
+
+    }
 }

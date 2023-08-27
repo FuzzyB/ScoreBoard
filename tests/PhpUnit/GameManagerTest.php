@@ -2,6 +2,7 @@
 
 namespace App\Tests\PhpUnit;
 
+use App\Game;
 use App\GameManager;
 use App\Interfaces\GameFactoryInterface;
 use App\Interfaces\GameInterface;
@@ -214,6 +215,39 @@ class GameManagerTest extends TestCase
         $this->gameRepository->expects($this->once())->method('getAllGamesInOrder');
 
         $games = $this->gameManager->getList();
+
+    }
+
+    /** @test */
+    public function summaryString()
+    {
+        $games = [
+            $this->getGame(0, 'Mexico', 'Canada', 0, 5),
+            $this->getGame(1, 'Spain', 'Brazil', 10, 2),
+            $this->getGame(2, 'Germany', 'France', 2, 2),
+            $this->getGame(3, 'Uruguay', 'Italy', 6, 6),
+            $this->getGame(4, 'Argentina', 'Australia', 3, 1),
+        ];
+        $this->gameRepository->expects($this->once())->method('getAllGamesInOrder')->willReturn($games);
+        $summary = $this->gameManager->getSummaryByTotalPoints();
+        $this->assertSame('a. Mexico - Canada: 0 - 5
+b. Spain - Brazil: 10 - 2
+c. Germany - France: 2 - 2
+d. Uruguay - Italy: 6 - 6
+e. Argentina - Australia: 3 - 1
+', $summary);
+    }
+
+    private function getGame($id, $homeTeam, $awayTeam, $scoreHome, $scoreAway, $isFinished = 0): GameInterface
+    {
+        $game = $this->createMock(GameInterface::class);
+        $game->method('getId')->willReturn($id);
+        $game->method('getHomeTeamName')->willReturn($homeTeam);
+        $game->method('getAwayTeamName')->willReturn($awayTeam);
+        $game->method('getAwayTeamScore')->willReturn($scoreAway);
+        $game->method('getHomeTeamScore')->willReturn($scoreHome);
+        $game->method('isFinished')->willReturn((bool)$isFinished);
+        return $game;
     }
 
     /**
