@@ -12,13 +12,10 @@
 .idea/
 .env
 .env.test
+.github/
 
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
+notes.txt
 ###< phpunit/phpunit ###
-
-###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
