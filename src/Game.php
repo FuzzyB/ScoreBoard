@@ -7,7 +7,7 @@ use App\Interfaces\GameInterface;
 class Game implements GameInterface
 {
 
-    private int $id;
+    private ?int $id = null;
     const STATE_IN_PROGRESS = 0;
     const STATE_FINISHED = 1;
     /**
@@ -46,7 +46,7 @@ class Game implements GameInterface
         return $this->homeTeamScores;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -73,5 +73,28 @@ class Game implements GameInterface
         if (!in_array($this->state, [self::STATE_IN_PROGRESS, self::STATE_FINISHED])) {
             throw new \Exception("Provided status is incorrect");
         }
+    }
+
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function setHomeTeamScore(int $score): void
+    {
+        if ($score < 0) {
+            throw new \Exception("Score must be positive");
+        }
+
+        $this->homeTeamScores = $score;
+    }
+
+    public function setAwayTeamScore(int $score): void
+    {
+        if ($score < 0) {
+            throw new \Exception("Score must be positive");
+        }
+
+        $this->awayTeamScores = $score;
     }
 }

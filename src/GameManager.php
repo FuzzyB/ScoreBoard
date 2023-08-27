@@ -73,6 +73,6 @@ class GameManager
 
     public function getList()
     {
-        return $this->repository->getInProgressGames();
+        return $this->repository->getAllGames();
     }
 }

@@ -41,7 +41,9 @@ class GameTest extends TestCase
         $awayTeam = 'Brazil';
 
         $game = new Game($homeTeam, $awayTeam, $awayTeamScore, $homeTeamScore, $status);
+        $game->setId(2);
 
+        $this->assertSame(2, $game->getId());
         $this->assertSame($homeTeam, $game->getHomeTeamName());
         $this->assertSame($awayTeam, $game->getAwayTeamName());
         $this->assertSame($homeTeamScore, $game->getAwayTeamScore());
@@ -60,4 +62,32 @@ class GameTest extends TestCase
         $this->expectException(\Exception::class);
         $game = new Game($homeTeam, $awayTeam, $awayTeamScore, $homeTeamScore, $status);
     }
+
+    /** @test */
+    public function setters()
+    {
+        $game = new Game('Poland', 'Brazil', 0, 0, Game::STATE_IN_PROGRESS);
+        $game->setHomeTeamScore(2);
+        $game->setAwayTeamScore(5);
+
+        $this->assertEquals(2, $game->getHomeTeamScore());
+        $this->assertEquals(5, $game->getAwayTeamScore());
+    }
+
+    /** @test */
+    public function homeTeamScoreIsPositive()
+    {
+        $this->expectException(\Exception::class);
+        $game = new Game('Poland', 'Brazil', 0, 0, Game::STATE_IN_PROGRESS);
+        $game->setHomeTeamScore(-2);
+    }
+    /** @test */
+    public function awayTeamScoreIsPositive()
+    {
+        $this->expectException(\Exception::class);
+        $game = new Game('Poland', 'Brazil', 0, 0, Game::STATE_IN_PROGRESS);
+        $game->setHomeTeamScore(-5);
+    }
+
+
 }

@@ -12,7 +12,13 @@ interface GameInterface
 
     public function getHomeTeamScore(): int;
 
-    public function getId(): int;
+    public function getId(): ?int;
 
     public function isFinished(): bool;
+
+    public function setId(?int $id): void;
+
+    public function setHomeTeamScore(int $score): void;
+
+    public function setAwayTeamScore(int $score): void;
 }

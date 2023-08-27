@@ -211,7 +211,7 @@ class GameManagerTest extends TestCase
      */
     public function gameList()
     {
-        $this->gameRepository->expects($this->once())->method('getInProgressGames');
+        $this->gameRepository->expects($this->once())->method('getAllGames');
 
         $games = $this->gameManager->getList();
     }
