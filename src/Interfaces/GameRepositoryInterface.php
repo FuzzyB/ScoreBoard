@@ -12,5 +12,5 @@ interface GameRepositoryInterface
 
     public function update(int $gameId, int $homeTeamScore, int $awayTeamScore): bool;
 
-    public function getAllGames(): array;
+    public function getAllGamesInOrder(): array;
 }

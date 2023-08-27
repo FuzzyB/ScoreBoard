@@ -69,9 +69,13 @@ class GameTest extends TestCase
         $game = new Game('Poland', 'Brazil', 0, 0, Game::STATE_IN_PROGRESS);
         $game->setHomeTeamScore(2);
         $game->setAwayTeamScore(5);
+        $game->setAwayTeamName('Finland');
+        $game->setHomeTeamName('Japan');
 
         $this->assertEquals(2, $game->getHomeTeamScore());
         $this->assertEquals(5, $game->getAwayTeamScore());
+        $this->assertEquals('Finland', $game->getAwayTeamName());
+        $this->assertEquals('Japan', $game->getHomeTeamName());
     }
 
     /** @test */
@@ -81,12 +85,30 @@ class GameTest extends TestCase
         $game = new Game('Poland', 'Brazil', 0, 0, Game::STATE_IN_PROGRESS);
         $game->setHomeTeamScore(-2);
     }
+
+
     /** @test */
     public function awayTeamScoreIsPositive()
     {
         $this->expectException(\Exception::class);
         $game = new Game('Poland', 'Brazil', 0, 0, Game::STATE_IN_PROGRESS);
         $game->setHomeTeamScore(-5);
+    }
+
+
+    /** @test */
+    public function awayTeamNameIsEmpty()
+    {
+        $this->expectException(\Exception::class);
+        $game = new Game('Poland', 'Brazil', 0, 0, Game::STATE_IN_PROGRESS);
+        $game->setAwayTeamName('');
+    }
+    /** @test */
+    public function homeTeamNameIsEmpty()
+    {
+        $this->expectException(\Exception::class);
+        $game = new Game('Poland', 'Brazil', 0, 0, Game::STATE_IN_PROGRESS);
+        $game->setHomeTeamName('');
     }
 
 

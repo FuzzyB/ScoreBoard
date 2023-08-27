@@ -211,7 +211,7 @@ class GameManagerTest extends TestCase
      */
     public function gameList()
     {
-        $this->gameRepository->expects($this->once())->method('getAllGames');
+        $this->gameRepository->expects($this->once())->method('getAllGamesInOrder');
 
         $games = $this->gameManager->getList();
     }
@@ -224,6 +224,5 @@ class GameManagerTest extends TestCase
         $game = $this->createMock(GameInterface::class);
         $game->method('isFinished')->willReturn(true);
         return $game;
-
     }
 }

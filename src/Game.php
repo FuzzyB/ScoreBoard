@@ -97,4 +97,22 @@ class Game implements GameInterface
 
         $this->awayTeamScores = $score;
     }
+
+    public function setHomeTeamName(string $name): void
+    {
+        if (empty($name)) {
+            throw new \Exception("Name can't be empty");
+        }
+
+        $this->homeTeamName = $name;
+    }
+
+    public function setAwayTeamName(string $name): void
+    {
+        if (empty($name)) {
+            throw new \Exception("Name can't be empty");
+        }
+
+        $this->awayTeamName = $name;
+    }
 }

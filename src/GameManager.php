@@ -75,6 +75,6 @@ class GameManager
 
     public function getList()
     {
-        return $this->repository->getAllGames();
+        return $this->repository->getAllGamesInOrder();
     }
 }

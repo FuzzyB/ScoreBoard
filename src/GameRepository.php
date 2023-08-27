@@ -56,9 +56,26 @@ class GameRepository implements GameRepositoryInterface
         return true;
     }
 
-    public function getAllGames(): array
+    public function getAllGamesInOrder(): array
     {
-        return $this->store['games'];
+        $games = $this->store['games'];
+        usort($games, [GameRepository::class, 'compareGames']);
+
+        return $games;
+    }
+
+    private function compareGames(GameInterface $a, GameInterface $b): int{
+        $sumA = $a->getAwayTeamScore() + $a->getHomeTeamScore();
+        $sumB = $b->getAwayTeamScore() + $b->getHomeTeamScore();
+
+
+        if ($sumA < $sumB ) {
+            return 1;
+        } else if ($sumA === $sumB && $a->getId() < $b->getId()) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
     private function getNextAvailableGameId(): int

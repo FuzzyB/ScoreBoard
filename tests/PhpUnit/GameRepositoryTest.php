@@ -45,9 +45,33 @@ class GameRepositoryTest extends TestCase
             $this->repository->add($game);
         }
 
-        $this->assertCount(4, $this->repository->getAllGames());
+        $this->assertCount(4, $this->repository->getAllGamesInOrder());
     }
 
+    /** @test */
+    public function orderByHigherTotalPoints()
+    {
+        $games = [];
+        $games[] = $this->getGame('Mexico', 'Canada', 0, 5, false);
+        $games[] = $this->getGame('Spain', 'Brazil', 10, 2, false);
+        $games[] = $this->getGame('Germany', 'France', 2, 2, false);
+        $games[] = $this->getGame('Uruguay', 'Italy', 6, 6, false);
+        $games[] = $this->getGame('Argentina', 'Australia', 3, 1, false);
+
+        foreach ($games as $game) {
+            $this->repository->add($game);
+        }
+
+        /** @var Game[] $orderedGames */
+        $orderedGames = $this->repository->getAllGamesInOrder();
+
+        $this->assertEquals(3, $orderedGames[0]->getId());
+        $this->assertEquals(1, $orderedGames[1]->getId());
+        $this->assertEquals(0, $orderedGames[2]->getId());
+        $this->assertEquals(4, $orderedGames[3]->getId());
+        $this->assertEquals(2, $orderedGames[4]->getId());
+
+    }
     /** @test */
     public function gameIdIncrement()
     {

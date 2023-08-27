@@ -21,4 +21,8 @@ interface GameInterface
     public function setHomeTeamScore(int $score): void;
 
     public function setAwayTeamScore(int $score): void;
+
+    public function setHomeTeamName(string $name): void;
+
+    public function setAwayTeamName(string $name): void;
 }
